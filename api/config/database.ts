@@ -1,3 +1,4 @@
+import env from '#start/env'
 import app from '@adonisjs/core/services/app'
 import { defineConfig } from '@adonisjs/lucid'
 
@@ -15,7 +16,8 @@ const dbConfig = defineConfig({
       client: 'better-sqlite3',
 
       connection: {
-        filename: app.tmpPath('db.sqlite3'),
+        // SQLITE_PATH lets production keep the database on a persistent volume.
+        filename: env.get('SQLITE_PATH') ?? app.tmpPath('db.sqlite3'),
       },
 
       /**

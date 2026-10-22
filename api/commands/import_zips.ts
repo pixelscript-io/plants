@@ -1,13 +1,10 @@
 import { BaseCommand, flags } from '@adonisjs/core/ace'
 import type { CommandOptions } from '@adonisjs/core/types/ace'
 import { DateTime } from 'luxon'
-import { execFile } from 'node:child_process'
+import { strFromU8, unzipSync } from 'fflate'
 import { existsSync } from 'node:fs'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import { promisify } from 'node:util'
-
-const run = promisify(execFile)
 
 const GAZETTEER_URL =
   'https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2023_Gazetteer/2023_Gaz_zcta_national.zip'
@@ -29,7 +26,6 @@ export default class ImportZips extends BaseCommand {
     const { default: db } = await import('@adonisjs/lucid/services/db')
     const workDir = this.app.makePath(this.dir)
     const archive = join(workDir, 'gaz_zcta.zip')
-    const extracted = join(workDir, 'gaz_zcta')
 
     if (this.refresh || !existsSync(archive)) {
       this.logger.info('Downloading Census ZCTA Gazetteer')
@@ -43,13 +39,15 @@ export default class ImportZips extends BaseCommand {
       await writeFile(archive, Buffer.from(await response.arrayBuffer()))
     }
 
-    if (this.refresh || !existsSync(extracted)) {
-      await mkdir(extracted, { recursive: true })
-      // bsdtar (Windows 10+, macOS) reads zip archives; GNU tar does not.
-      await run('tar', ['-xf', archive, '-C', extracted])
+    // Read the one text file out of the zip in memory (works on every OS; no `tar` or `unzip`).
+    const files = unzipSync(new Uint8Array(await readFile(archive)))
+    const entry = Object.keys(files).find((name) => name.endsWith('.txt'))
+    if (!entry) {
+      this.logger.error('The Census download did not contain a .txt file')
+      this.exitCode = 1
+      return
     }
-
-    const text = await readFile(join(extracted, '2023_Gaz_zcta_national.txt'), 'utf8')
+    const text = strFromU8(files[entry])
     const [header, ...lines] = text.split(/\r?\n/).filter(Boolean)
     const names = header.split('\t').map((name) => name.trim())
     const geoid = names.indexOf('GEOID')

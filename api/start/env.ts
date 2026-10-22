@@ -45,6 +45,9 @@ export default await Env.create(new URL('../', import.meta.url), {
   SMTP_PASSWORD: Env.schema.string.optional(),
   SMTP_SECURE: Env.schema.boolean.optional(),
 
+  // Where the SQLite database file lives (default: tmp/db.sqlite3).
+  SQLITE_PATH: Env.schema.string.optional(),
+
   // Public address of the dashboard, used for links in emails.
   WEB_URL: Env.schema.string.optional(),
 })

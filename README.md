@@ -11,8 +11,8 @@ More detail lives next to the code: [`api/DATA_REVIEW.md`](api/DATA_REVIEW.md) (
 
 ## What was and was not verified
 
-- **Verified:** every development step below, and a production **build and run of the dashboard** (`web`).
-- **Not verified:** a production build of the **API** (`node ace build`) and running it on **Postgres**. The development database is SQLite. The production steps for those are the standard AdonisJS ones; treat them as a starting point and test them before relying on them.
+- **Verified (on Windows 11, Node 24):** every development step below; a production **build and run of the dashboard**; and a production **build of the API** run from a clean copy (`npm ci --omit=dev`, migrations, `data:setup --publish`, server start, health checks and one monitor run).
+- **Not verified:** running on **Linux or macOS**, and on **Postgres**. The database is SQLite. The Postgres steps are a starting point; test them before relying on them.
 - There is no automated test suite yet; checks are the type-checks and `plants:audit` below.
 
 ## Prerequisites
@@ -20,7 +20,6 @@ More detail lives next to the code: [`api/DATA_REVIEW.md`](api/DATA_REVIEW.md) (
 - Node.js 24 (what this was built and tested on) and npm
 - Git
 - Internet access for the first data import (about 60 MB of public datasets)
-- `tar` that can read zip files. Windows 10+ and macOS have it. On Linux, GNU `tar` cannot, and the ZIP-code import will fail. Install `bsdtar` (`libarchive-tools` on Debian/Ubuntu) or unzip the file by hand. This is untested on Linux.
 
 ## 1. Clone
 
@@ -41,19 +40,13 @@ node ace generate:key          # writes APP_KEY into .env
 node ace migration:run         # creates the SQLite database in api/tmp/
 ```
 
-Load the data. Each command is repeatable, and they need internet:
+Load the data (needs internet, takes a few minutes, safe to repeat):
 
 ```bash
-node ace import:usda               # USDA PLANTS names (public domain)
-node ace import:noaa-frost         # NOAA frost dates (public domain)
-node ace import:zips               # Census ZIP centroids (public domain)
-node ace import:hardiness-zones    # USDA zones by ZIP, via Oregon State (unaltered, needs attribution)
-
-node ace db:seed --files database/seeders/plant_seeder.ts --files database/seeders/companion_seeder.ts --files database/seeders/amendment_seeder.ts
-
-node ace plants:audit --warnings   # consistency checks; must report no errors
-node ace plants:publish --all      # plants stay hidden from the API until published
+node ace data:setup --publish
 ```
+
+This downloads the public datasets (USDA PLANTS names, NOAA frost dates, Census ZIP centroids, Oregon State hardiness zones), seeds the curated plants, companions and amendments, runs the audit, and publishes every plant if the audit has no errors. It stops at the first failing step. Leave out `--publish` to review first (`node ace plants:audit --warnings`, then `node ace plants:publish --all`); plants stay hidden from the API until published. Each step is also its own command (`node ace import:usda`, `import:noaa-frost`, `import:zips`, `import:hardiness-zones`) if you only need to reload one.
 
 Start it:
 
@@ -109,7 +102,7 @@ cd build
 cp ../.env .env                # or provide the variables below another way
 npm ci --omit=dev
 node ace migration:run --force
-# load the data once (same import commands as above, run from build/)
+node ace data:setup --publish     # load the data once
 node bin/server.js
 ```
 
@@ -120,14 +113,19 @@ Required settings (see `api/.env.example`):
 | `NODE_ENV` | `production` |
 | `APP_KEY` | Generate with `node ace generate:key`. Keep it secret and stable. |
 | `HOST`, `PORT`, `APP_URL` | Where the API listens, and its public URL |
+| `SQLITE_PATH` | Optional. Full path of the SQLite file; point it at persistent storage. Default `tmp/db.sqlite3` under the app. |
 | `LIMITER_STORE` | `database` |
 | `MAIL_TRANSPORT` | **Must be `smtp`.** The API refuses to start with `file`. |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_SECURE`, `MAIL_FROM` | Your mail provider. Set up SPF/DKIM for the sender domain. |
 | `WEB_URL` | The dashboard's public address. Links in emails point here. |
 
+Check it: `curl http://localhost:3333/api/v1/health` (and `/api/v1/health/ready`, which also checks the database).
+
 Notes:
 
-- **Database.** The current config uses SQLite in `tmp/`, which must be on persistent storage and is suited to a single instance. To use Postgres, install `pg`, switch the connection in `config/database.ts` (a commented example is there) and add the `DB_*` settings. This has not been tested here.
+- **Install.** `better-sqlite3` ships a prebuilt binary; `npm ci` does not compile it, so no C++ toolchain is needed on common platforms.
+- **Time zones.** The API treats stored times as UTC whatever the server's time zone is.
+- **Database.** The current config uses SQLite (`SQLITE_PATH`, default `tmp/db.sqlite3`), which must be on persistent storage and is suited to a single instance. To use Postgres, install `pg`, switch the connection in `config/database.ts` (a commented example is there) and add the `DB_*` settings. This has not been tested here.
 - **CORS.** `config/cors.ts` allows no origins in production. The dashboard does not need any (its server makes the calls), but browser apps calling the API directly do.
 - Plants are hidden until published (`node ace plants:publish --all`). Leave `SERVE_UNPUBLISHED` unset or `false`.
 
@@ -168,8 +166,9 @@ The production build sends a strict Content-Security-Policy and HSTS, and the se
 |---|---|
 | `node ace plants:audit --warnings` | Check plant, companion and amendment data for contradictions |
 | `node ace plants:publish --all` or `<slug> ...` | Make plants visible; `--unpublish` hides them. Refuses to run if the audit has errors. |
-| `node ace import:*` | Reload any source dataset |
-| `node ace db:seed --files ...` | Reload the curated plants, companions and amendments (publish state is kept) |
+| `node ace data:setup [--publish]` | Download all datasets, seed, audit and optionally publish |
+| `node ace import:*` | Reload one source dataset |
+| `node ace db:seed --files ...` | Reload one curated seeder (publish state is kept) |
 | `npm run monitor` | Record heartbeats for the status page |
 | `node ace list` | Everything else |
 

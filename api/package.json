@@ -74,6 +74,7 @@
     "astronomy-engine": "^2.1.19",
     "better-sqlite3": "^13.0.3",
     "csv-parse": "^7.0.3",
+    "fflate": "^0.8.3",
     "luxon": "^3.7.2",
     "nodemailer": "^10.2.0",
     "reflect-metadata": "^0.2.2"
@@ -86,7 +87,7 @@
   },
   "allowScripts": {
     "@swc/core": true,
-    "better-sqlite3": true,
+    "better-sqlite3": false,
     "esbuild": true,
     "fsevents": true
   },
