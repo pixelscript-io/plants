@@ -111,8 +111,18 @@ export class CompanionSchema extends BaseModel {
 }
 
 export class FrostStationSchema extends BaseModel {
-  static $columns = ['createdAt', 'elevationM', 'firstFallAverage', 'firstFallConservative', 'firstFallOptimistic', 'id', 'lastSpringAverage', 'lastSpringConservative', 'lastSpringOptimistic', 'latitude', 'longitude', 'name', 'noaaId', 'state', 'updatedAt'] as const
+  static $columns = ['annualPrecipIn', 'annualSnowIn', 'avgMaxTempF', 'avgMinTempF', 'avgTempF', 'createdAt', 'elevationM', 'firstFallAverage', 'firstFallConservative', 'firstFallOptimistic', 'gddBaseFifty', 'gddBaseForty', 'gddBaseSixty', 'id', 'lastSpringAverage', 'lastSpringConservative', 'lastSpringOptimistic', 'latitude', 'longitude', 'name', 'noaaId', 'state', 'updatedAt'] as const
   $columns = FrostStationSchema.$columns
+  @column()
+  declare annualPrecipIn: number | null
+  @column()
+  declare annualSnowIn: number | null
+  @column()
+  declare avgMaxTempF: number | null
+  @column()
+  declare avgMinTempF: number | null
+  @column()
+  declare avgTempF: number | null
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
   @column()
@@ -123,6 +133,12 @@ export class FrostStationSchema extends BaseModel {
   declare firstFallConservative: string | null
   @column()
   declare firstFallOptimistic: string | null
+  @column()
+  declare gddBaseFifty: number | null
+  @column()
+  declare gddBaseForty: number | null
+  @column()
+  declare gddBaseSixty: number | null
   @column({ isPrimary: true })
   declare id: number
   @column()
@@ -287,7 +303,7 @@ export class PlantSourceSchema extends BaseModel {
 }
 
 export class PlantSchema extends BaseModel {
-  static $columns = ['commonName', 'createdAt', 'daysToGerminationMax', 'daysToGerminationMin', 'daysToHarvestMax', 'daysToHarvestMin', 'description', 'directSowWeeksMax', 'directSowWeeksMin', 'family', 'frostTolerance', 'gbifId', 'genus', 'hardinessZoneMax', 'hardinessZoneMin', 'heightCm', 'id', 'imageUrl', 'isPublished', 'lifeCycle', 'plantType', 'scientificName', 'slug', 'soilPhMax', 'soilPhMin', 'soilTypes', 'sowIndoorsWeeksMax', 'sowIndoorsWeeksMin', 'spacingCm', 'sun', 'transplantWeeksMax', 'transplantWeeksMin', 'updatedAt', 'usdaSymbol', 'waterNeeds', 'wateringIntervalDays', 'wikidataId'] as const
+  static $columns = ['commonName', 'createdAt', 'daysToGerminationMax', 'daysToGerminationMin', 'daysToHarvestMax', 'daysToHarvestMin', 'description', 'directSowWeeksMax', 'directSowWeeksMin', 'family', 'frostTolerance', 'gbifId', 'genus', 'hardinessZoneMax', 'hardinessZoneMin', 'heightCm', 'id', 'imageUrl', 'isPublished', 'lifeCycle', 'nativeStatusContiguous', 'nativeStatusL48', 'nativeStatusLower48', 'plantType', 'scientificName', 'slug', 'soilPhMax', 'soilPhMin', 'soilTypes', 'sowIndoorsWeeksMax', 'sowIndoorsWeeksMin', 'spacingCm', 'sun', 'transplantWeeksMax', 'transplantWeeksMin', 'updatedAt', 'usdaDurations', 'usdaGrowthHabits', 'usdaSymbol', 'waterNeeds', 'wateringIntervalDays', 'wikidataId'] as const
   $columns = PlantSchema.$columns
   @column()
   declare commonName: string
@@ -330,6 +346,12 @@ export class PlantSchema extends BaseModel {
   @column()
   declare lifeCycle: string | null
   @column()
+  declare nativeStatusContiguous: string | null
+  @column()
+  declare nativeStatusL48: string | null
+  @column()
+  declare nativeStatusLower48: string | null
+  @column()
   declare plantType: string | null
   @column()
   declare scientificName: string | null
@@ -355,6 +377,10 @@ export class PlantSchema extends BaseModel {
   declare transplantWeeksMin: number | null
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
+  @column()
+  declare usdaDurations: any | null
+  @column()
+  declare usdaGrowthHabits: any | null
   @column()
   declare usdaSymbol: string | null
   @column()

@@ -8,7 +8,7 @@ const PERENNIAL_TYPES = ['tree', 'shrub']
 
 // Sown or planted in late summer or fall (garlic, biennials, fall crops). Extension
 // sources give their dates relative to the first fall frost, not the last spring frost.
-const FALL_PLANTED = new Set(['garlic', 'radicchio', 'foxglove', 'hollyhock'])
+const FALL_PLANTED = new Set(['garlic', 'radicchio', 'foxglove', 'hollyhock', 'forget-me-not', 'sweet-william'])
 
 /**
  * Checks plants, companions and amendments for internal contradictions.

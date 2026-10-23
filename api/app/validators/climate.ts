@@ -11,6 +11,8 @@ export const frostValidator = vine.create({
   year: vine.number().withoutDecimals().min(1900).max(2100).optional(),
 })
 
+export const climateValidator = vine.create(location)
+
 export const calendarValidator = vine.create({
   ...location,
   /**

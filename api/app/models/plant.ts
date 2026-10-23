@@ -26,6 +26,20 @@ export default class Plant extends PlantSchema {
   })
   declare soilTypes: string[] | null
 
+  @column({
+    prepare: (value: string[] | null) => (value === null ? null : JSON.stringify(value)),
+    consume: (value: string | string[] | null) =>
+      typeof value === 'string' ? JSON.parse(value) : value,
+  })
+  declare usdaDurations: string[] | null
+
+  @column({
+    prepare: (value: string[] | null) => (value === null ? null : JSON.stringify(value)),
+    consume: (value: string | string[] | null) =>
+      typeof value === 'string' ? JSON.parse(value) : value,
+  })
+  declare usdaGrowthHabits: string[] | null
+
   @hasMany(() => PlantName)
   declare names: HasMany<typeof PlantName>
 

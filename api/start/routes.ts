@@ -78,6 +78,7 @@ router
         router.get('moon', [controllers.Moon, 'show'])
         router.get('moon/phases', [controllers.Moon, 'phases'])
         router.get('frost', [controllers.Frost, 'show'])
+        router.get('climate', [controllers.Climate, 'show'])
         router.get('hardiness', [controllers.Hardiness, 'show'])
         router.get('calendar', [controllers.Calendar, 'show'])
       })

@@ -3,6 +3,17 @@
 Reviewed 2026-10-22. Covers the 138 plants, 376 companion pairs and 17 amendments in
 `database/seeders/data/`.
 
+## Added 2026-10-23: 81 more plants (not reviewed, not published)
+
+The curated set grew from 138 to 219 plants (vegetables, herbs, fruit and nut trees, perennials and
+annuals, shrubs and shade trees), with 106 more companion pairs. Everything below this heading in the
+review (counts, extension cross-checks, corrections) describes the **first 138 plants only**.
+
+- The new plants pass `plants:audit` (0 errors) and each has a USDA symbol and at least one companion.
+- Their values come from general horticultural knowledge. **None are cross-checked** against an extension guide, and ornamental companion pairs rest mostly on garden practice and pollinator support rather than trials.
+- They are seeded **unpublished**. `plants:publish --all` (and `data:setup --publish`) would publish them too; review first, or publish by slug.
+- Cucamelon was dropped because it has no USDA PLANTS entry, which every plant needs.
+
 ## Summary
 
 | Check | Result |

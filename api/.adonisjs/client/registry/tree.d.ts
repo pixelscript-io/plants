@@ -68,6 +68,9 @@ export interface ApiDefinition {
     frost: {
       show: typeof routes['climate.frost.show']
     }
+    climate: {
+      show: typeof routes['climate.climate.show']
+    }
     hardiness: {
       show: typeof routes['climate.hardiness.show']
     }

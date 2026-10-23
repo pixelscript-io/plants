@@ -46,7 +46,7 @@ Load the data (needs internet, takes a few minutes, safe to repeat):
 node ace data:setup --publish
 ```
 
-This downloads the public datasets (USDA PLANTS names, NOAA frost dates, Census ZIP centroids, Oregon State hardiness zones), seeds the curated plants, companions and amendments, runs the audit, and publishes every plant if the audit has no errors. It stops at the first failing step. Leave out `--publish` to review first (`node ace plants:audit --warnings`, then `node ace plants:publish --all`); plants stay hidden from the API until published. Each step is also its own command (`node ace import:usda`, `import:noaa-frost`, `import:zips`, `import:hardiness-zones`) if you only need to reload one.
+This downloads the public datasets (USDA PLANTS names, NOAA frost dates, Census ZIP centroids, Oregon State hardiness zones), seeds the curated plants, companions and amendments, runs the audit, and publishes every plant if the audit has no errors. **Note:** 81 of the 219 curated plants are new and not yet reviewed (see `api/DATA_REVIEW.md`); skip `--publish` to keep them hidden. It stops at the first failing step. Leave out `--publish` to review first (`node ace plants:audit --warnings`, then `node ace plants:publish --all`); plants stay hidden from the API until published. Each step is also its own command (`node ace import:usda`, `import:noaa-frost`, `import:zips`, `import:hardiness-zones`, `import:usda-traits`) if you only need to reload one.
 
 Start it:
 
@@ -168,6 +168,7 @@ The production build sends a strict Content-Security-Policy and HSTS, and the se
 | `node ace plants:publish --all` or `<slug> ...` | Make plants visible; `--unpublish` hides them. Refuses to run if the audit has errors. |
 | `node ace data:setup [--publish]` | Download all datasets, seed, audit and optionally publish |
 | `node ace import:*` | Reload one source dataset |
+| `node ace import:usda-traits` | Fetch duration, growth habit and native status from USDA for every plant (about a minute; needs the plants seeded first) |
 | `node ace db:seed --files ...` | Reload one curated seeder (publish state is kept) |
 | `npm run monitor` | Record heartbeats for the status page |
 | `node ace list` | Everything else |

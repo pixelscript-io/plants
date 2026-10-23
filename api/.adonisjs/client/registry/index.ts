@@ -156,6 +156,12 @@ const routes = {
     tokens: [[0,"api"],[0,"v1"],[0,"frost"]],
     types: placeholder as Registry['climate.frost.show']['types'],
   },
+  'climate.climate.show': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/v1/climate',
+    tokens: [[0,"api"],[0,"v1"],[0,"climate"]],
+    types: placeholder as Registry['climate.climate.show']['types'],
+  },
   'climate.hardiness.show': {
     methods: ["GET","HEAD"],
     pattern: '/api/v1/hardiness',

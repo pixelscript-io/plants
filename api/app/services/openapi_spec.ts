@@ -218,6 +218,31 @@ export function buildOpenApiSpec(baseUrl: string) {
           },
         },
       },
+      '/climate': {
+        get: {
+          tags: ['Frost & calendar'],
+          operationId: 'getClimateNormals',
+          summary: 'Get climate normals for a location',
+          description:
+            'Annual temperature, precipitation, snowfall and growing degree days (NOAA 1991-2020 normals) for the nearest weather station. Give either `zip` or both `lat` and `lon`. A value is null where the station does not report it.',
+          security: [{ ApiKeyAuth: [] }],
+          parameters: [
+            { $ref: '#/components/parameters/Zip' },
+            { $ref: '#/components/parameters/Lat' },
+            { $ref: '#/components/parameters/Lon' },
+          ],
+          responses: {
+            '200': {
+              description: 'Climate normals and the station they come from.',
+              headers: rateLimitHeaders,
+              content: jsonContent({ type: 'object', required: ['data'], properties: { data: ref('ClimateResponse') } }),
+            },
+            '404': errorResponse('The ZIP code is unknown, or no weather station is within 100 km.'),
+            '422': errorResponse('The location is missing or a parameter is invalid.'),
+            ...keyedErrors,
+          },
+        },
+      },
       '/hardiness': {
         get: {
           tags: ['Frost & calendar'],
@@ -811,7 +836,7 @@ export function buildOpenApiSpec(baseUrl: string) {
           allOf: [
             {
               type: 'object',
-              required: ['id', 'slug', 'commonName', 'names', 'care', 'growth', 'planting', 'companions', 'amendments', 'sources'],
+              required: ['id', 'slug', 'commonName', 'usda', 'names', 'care', 'growth', 'planting', 'companions', 'amendments', 'sources'],
               properties: {
                 id: { type: 'integer' },
                 slug: { type: 'string' },
@@ -826,6 +851,15 @@ export function buildOpenApiSpec(baseUrl: string) {
                 usdaSymbol: { ...nullable('string'), description: 'Symbol in the USDA PLANTS Database.', example: 'SOLY2' },
                 wikidataId: nullable('string'),
                 gbifId: nullable('string'),
+                usda: {
+                  type: 'object',
+                  description: 'Traits from the USDA PLANTS profile. Null where USDA has no entry.',
+                  properties: {
+                    durations: { ...nullable('array'), items: { type: 'string', example: 'Perennial' }, description: 'Annual, Biennial and/or Perennial. A plant can have several because it varies with climate.' },
+                    growthHabits: { ...nullable('array'), items: { type: 'string', example: 'Forb/herb' }, description: 'For example Forb/herb, Graminoid, Shrub, Subshrub, Tree or Vine.' },
+                    nativeStatus: { type: ['string', 'null'], enum: ['native', 'introduced', 'native_and_introduced', null], description: 'Whether the plant is native to the lower 48 US states.' },
+                  },
+                },
                 names: { type: 'array', items: ref('PlantName') },
                 care: {
                   type: 'object',
@@ -913,6 +947,36 @@ export function buildOpenApiSpec(baseUrl: string) {
             },
             frostFreeDays: { type: 'integer', description: 'Days between the average last spring and average first fall freeze.' },
             notes: { type: 'array', items: { type: 'string' } },
+          },
+        },
+        ClimateResponse: {
+          type: 'object',
+          required: ['location', 'station', 'period', 'temperatureF', 'annualPrecipitationIn', 'annualSnowfallIn', 'growingDegreeDays'],
+          properties: {
+            location: ref('Location'),
+            station: ref('FrostStation'),
+            period: { type: 'string', example: '1991-2020' },
+            temperatureF: {
+              type: 'object',
+              properties: {
+                average: nullable('number'),
+                averageLow: nullable('number'),
+                averageHigh: nullable('number'),
+              },
+            },
+            annualPrecipitationIn: { ...nullable('number'), description: 'Inches of precipitation in a normal year.' },
+            annualSnowfallIn: { ...nullable('number'), description: 'Inches of snowfall in a normal year.' },
+            precipitationStation: { oneOf: [ref('FrostStation'), { type: 'null' }], description: 'The station the precipitation comes from when it is not the main station (which does not report it).' },
+            snowfallStation: { oneOf: [ref('FrostStation'), { type: 'null' }], description: 'The station the snowfall comes from when it is not the main station.' },
+            growingDegreeDays: {
+              type: 'object',
+              description: 'Heat accumulated in a normal year, in degree-days F, counting only the days above each base temperature. Used to predict plant and insect development.',
+              properties: {
+                base40F: nullable('number'),
+                base50F: nullable('number'),
+                base60F: nullable('number'),
+              },
+            },
           },
         },
         Readiness: {

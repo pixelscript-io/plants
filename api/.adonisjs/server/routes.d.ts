@@ -29,6 +29,7 @@ export type ScannedRoutes = {
     'climate.moon.show': { paramsTuple?: []; params?: {} }
     'climate.moon.phases': { paramsTuple?: []; params?: {} }
     'climate.frost.show': { paramsTuple?: []; params?: {} }
+    'climate.climate.show': { paramsTuple?: []; params?: {} }
     'climate.hardiness.show': { paramsTuple?: []; params?: {} }
     'climate.calendar.show': { paramsTuple?: []; params?: {} }
   }
@@ -49,6 +50,7 @@ export type ScannedRoutes = {
     'climate.moon.show': { paramsTuple?: []; params?: {} }
     'climate.moon.phases': { paramsTuple?: []; params?: {} }
     'climate.frost.show': { paramsTuple?: []; params?: {} }
+    'climate.climate.show': { paramsTuple?: []; params?: {} }
     'climate.hardiness.show': { paramsTuple?: []; params?: {} }
     'climate.calendar.show': { paramsTuple?: []; params?: {} }
   }
@@ -69,6 +71,7 @@ export type ScannedRoutes = {
     'climate.moon.show': { paramsTuple?: []; params?: {} }
     'climate.moon.phases': { paramsTuple?: []; params?: {} }
     'climate.frost.show': { paramsTuple?: []; params?: {} }
+    'climate.climate.show': { paramsTuple?: []; params?: {} }
     'climate.hardiness.show': { paramsTuple?: []; params?: {} }
     'climate.calendar.show': { paramsTuple?: []; params?: {} }
   }

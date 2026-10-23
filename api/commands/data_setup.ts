@@ -29,6 +29,9 @@ export default class DataSetup extends BaseCommand {
     const files = SEEDERS.flatMap((seeder) => ['--files', `database/seeders/${seeder}.${extension}`])
     if (!(await this.step('db:seed', files))) return
 
+    // Needs the plants seeded above (it reads each plant's USDA symbol).
+    if (!this.skipImports && !(await this.step('import:usda-traits', []))) return
+
     if (!(await this.step('plants:audit', []))) return
     if (this.publish && !(await this.step('plants:publish', ['--all']))) return
 

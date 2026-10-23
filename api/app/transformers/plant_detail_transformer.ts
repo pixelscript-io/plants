@@ -4,6 +4,12 @@ import { BaseTransformer } from '@adonisjs/core/transformers'
 const range = (min: number | null, max: number | null) =>
   min === null && max === null ? null : { min, max }
 
+const NATIVE_STATUS: Record<string, 'native' | 'introduced' | 'native_and_introduced'> = {
+  Native: 'native',
+  Introduced: 'introduced',
+  'Introduced, Native': 'native_and_introduced',
+}
+
 /**
  * Full representation with growing data, companions and amendments.
  * The controller is expected to preload every relation used here.
@@ -50,6 +56,14 @@ export default class PlantDetailTransformer extends BaseTransformer<Plant> {
         'wikidataId',
         'gbifId',
       ]),
+      // From the USDA PLANTS profile (public domain).
+      usda: {
+        durations: plant.usdaDurations,
+        growthHabits: plant.usdaGrowthHabits,
+        nativeStatus: plant.nativeStatusContiguous
+          ? (NATIVE_STATUS[plant.nativeStatusContiguous] ?? null)
+          : null,
+      },
       names: plant.names.map((name) => ({ name: name.name, language: name.language })),
       care: {
         sun: plant.sun,

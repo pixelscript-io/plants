@@ -332,6 +332,19 @@ export interface Registry {
       rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/frost_controller').default['show']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
+  'climate.climate.show': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/v1/climate'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: ExtractQueryForGet<InferInput<(typeof import('#validators/climate').climateValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/climate_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/climate_controller').default['show']>>> | { status: 422; response: { errors: SimpleError[] } }
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/climate_controller').default['show']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
   'climate.hardiness.show': {
     methods: ["GET","HEAD"]
     pattern: '/api/v1/hardiness'

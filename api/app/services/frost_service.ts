@@ -42,14 +42,21 @@ export async function resolveLocation(input: {
   throw new ApiError('Provide either `zip`, or both `lat` and `lon`.', 422)
 }
 
-/** The nearest station with frost data, or null when none is close enough. */
-export async function nearestStation(location: Location) {
+/**
+ * The nearest station with frost data, or null when none is close enough.
+ * With `reporting`, only stations that have a value for that column count.
+ */
+export async function nearestStation(
+  location: Location,
+  reporting?: 'annualPrecipIn' | 'annualSnowIn'
+) {
   // About 1.2 degrees of latitude is 133 km; widen longitude for latitude.
   const latDelta = 1.2
   const lonDelta = latDelta / Math.max(Math.cos(toRad(location.latitude)), 0.2)
   const candidates = await FrostStation.query()
     .whereBetween('latitude', [location.latitude - latDelta, location.latitude + latDelta])
     .whereBetween('longitude', [location.longitude - lonDelta, location.longitude + lonDelta])
+    .if(reporting, (query) => query.whereNotNull(reporting!))
 
   let best: { station: FrostStation; distanceKm: number } | null = null
   for (const station of candidates) {
