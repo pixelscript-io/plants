@@ -7,6 +7,7 @@ export const controllers = {
   AccessTokens: () => import('#controllers/access_tokens_controller'),
   ApiKeys: () => import('#controllers/api_keys_controller'),
   Calendar: () => import('#controllers/calendar_controller'),
+  Catalog: () => import('#controllers/catalog_controller'),
   Climate: () => import('#controllers/climate_controller'),
   Docs: () => import('#controllers/docs_controller'),
   EmailVerification: () => import('#controllers/email_verification_controller'),

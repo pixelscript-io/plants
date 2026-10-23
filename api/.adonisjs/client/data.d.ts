@@ -6,6 +6,7 @@
 /// <reference path="./manifest.d.ts" />
 import type { InferData, InferVariants } from '@adonisjs/core/types/transformers'
 import type ApiKeyTransformer from '#transformers/api_key_transformer'
+import type CatalogSpeciesTransformer from '#transformers/catalog_species_transformer'
 import type PlantDetailTransformer from '#transformers/plant_detail_transformer'
 import type PlantTransformer from '#transformers/plant_transformer'
 import type UserTransformer from '#transformers/user_transformer'
@@ -14,6 +15,10 @@ export namespace Data {
   export type ApiKey = InferData<ApiKeyTransformer>
   export namespace ApiKey {
     export type Variants = InferVariants<ApiKeyTransformer>
+  }
+  export type CatalogSpecies = InferData<CatalogSpeciesTransformer>
+  export namespace CatalogSpecies {
+    export type Variants = InferVariants<CatalogSpeciesTransformer>
   }
   export type PlantDetail = InferData<PlantDetailTransformer>
   export namespace PlantDetail {

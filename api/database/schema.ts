@@ -91,6 +91,37 @@ export class AuthAccessTokenSchema extends BaseModel {
   declare updatedAt: DateTime | null
 }
 
+export class CatalogSpecySchema extends BaseModel {
+  static $columns = ['characteristics', 'commonName', 'createdAt', 'durations', 'family', 'growthHabits', 'hasCharacteristics', 'id', 'nativeStatusContiguous', 'scientificName', 'updatedAt', 'usdaId', 'usdaSymbol'] as const
+  $columns = CatalogSpecySchema.$columns
+  @column()
+  declare characteristics: any | null
+  @column()
+  declare commonName: string | null
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare durations: any | null
+  @column()
+  declare family: string | null
+  @column()
+  declare growthHabits: any | null
+  @column()
+  declare hasCharacteristics: boolean
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare nativeStatusContiguous: string | null
+  @column()
+  declare scientificName: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare usdaId: number | null
+  @column()
+  declare usdaSymbol: string
+}
+
 export class CompanionSchema extends BaseModel {
   static $columns = ['companionPlantId', 'createdAt', 'id', 'plantId', 'reason', 'relationship', 'updatedAt'] as const
   $columns = CompanionSchema.$columns

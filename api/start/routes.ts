@@ -80,6 +80,8 @@ router
         router.get('frost', [controllers.Frost, 'show'])
         router.get('climate', [controllers.Climate, 'show'])
         router.get('hardiness', [controllers.Hardiness, 'show'])
+        router.get('catalog', [controllers.Catalog, 'index'])
+        router.get('catalog/:symbol', [controllers.Catalog, 'show'])
         router.get('calendar', [controllers.Calendar, 'show'])
       })
       .as('climate')

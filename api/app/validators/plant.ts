@@ -15,3 +15,17 @@ export const plantIndexValidator = vine.create({
   page: vine.number().min(1).optional(),
   perPage: vine.number().min(1).max(100).optional(),
 })
+
+/** Validator for the catalog search query string. */
+export const catalogIndexValidator = vine.create({
+  q: vine.string().trim().minLength(1).maxLength(100).optional(),
+  growthHabit: vine
+    .enum(['Forb/herb', 'Graminoid', 'Shrub', 'Subshrub', 'Tree', 'Vine', 'Lichenous', 'Nonvascular'])
+    .optional(),
+  duration: vine.enum(['Annual', 'Biennial', 'Perennial']).optional(),
+  nativeStatus: vine.enum(['native', 'introduced']).optional(),
+  shadeTolerance: vine.enum(['Low', 'Medium', 'High']).optional(),
+  droughtTolerance: vine.enum(['None', 'Low', 'Medium', 'High']).optional(),
+  page: vine.number().min(1).optional(),
+  perPage: vine.number().min(1).max(100).optional(),
+})

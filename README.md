@@ -167,6 +167,7 @@ The production build sends a strict Content-Security-Policy and HSTS, and the se
 | `node ace plants:audit --warnings` | Check plant, companion and amendment data for contradictions |
 | `node ace plants:publish --all` or `<slug> ...` | Make plants visible; `--unpublish` hides them. Refuses to run if the audit has errors. |
 | `node ace data:setup [--publish]` | Download all datasets, seed, audit and optionally publish |
+| `node ace import:usda-catalog` | Load the species catalog (`/catalog`): probes about 35,000 USDA species once and keeps those with growing data. Takes about 3 hours and resumes if stopped. Also available as `data:setup --catalog`. |
 | `node ace import:*` | Reload one source dataset |
 | `node ace import:usda-traits` | Fetch duration, growth habit and native status from USDA for every plant (about a minute; needs the plants seeded first) |
 | `node ace db:seed --files ...` | Reload one curated seeder (publish state is kept) |

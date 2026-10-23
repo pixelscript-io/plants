@@ -31,6 +31,8 @@ export type ScannedRoutes = {
     'climate.frost.show': { paramsTuple?: []; params?: {} }
     'climate.climate.show': { paramsTuple?: []; params?: {} }
     'climate.hardiness.show': { paramsTuple?: []; params?: {} }
+    'climate.catalog.index': { paramsTuple?: []; params?: {} }
+    'climate.catalog.show': { paramsTuple: [ParamValue]; params: {'symbol': ParamValue} }
     'climate.calendar.show': { paramsTuple?: []; params?: {} }
   }
   GET: {
@@ -52,6 +54,8 @@ export type ScannedRoutes = {
     'climate.frost.show': { paramsTuple?: []; params?: {} }
     'climate.climate.show': { paramsTuple?: []; params?: {} }
     'climate.hardiness.show': { paramsTuple?: []; params?: {} }
+    'climate.catalog.index': { paramsTuple?: []; params?: {} }
+    'climate.catalog.show': { paramsTuple: [ParamValue]; params: {'symbol': ParamValue} }
     'climate.calendar.show': { paramsTuple?: []; params?: {} }
   }
   HEAD: {
@@ -73,6 +77,8 @@ export type ScannedRoutes = {
     'climate.frost.show': { paramsTuple?: []; params?: {} }
     'climate.climate.show': { paramsTuple?: []; params?: {} }
     'climate.hardiness.show': { paramsTuple?: []; params?: {} }
+    'climate.catalog.index': { paramsTuple?: []; params?: {} }
+    'climate.catalog.show': { paramsTuple: [ParamValue]; params: {'symbol': ParamValue} }
     'climate.calendar.show': { paramsTuple?: []; params?: {} }
   }
   POST: {

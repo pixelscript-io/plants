@@ -358,6 +358,32 @@ export interface Registry {
       rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/hardiness_controller').default['show']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
+  'climate.catalog.index': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/v1/catalog'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: ExtractQueryForGet<InferInput<(typeof import('#validators/plant').catalogIndexValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/catalog_controller').default['index']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/catalog_controller').default['index']>>> | { status: 422; response: { errors: SimpleError[] } }
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/catalog_controller').default['index']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'climate.catalog.show': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/v1/catalog/:symbol'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { symbol: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/catalog_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/catalog_controller').default['show']>>>
+      rawResponse: ExtractRawResponse<Awaited<ReturnType<import('#controllers/catalog_controller').default['show']>>>
+    }
+  }
   'climate.calendar.show': {
     methods: ["GET","HEAD"]
     pattern: '/api/v1/calendar'

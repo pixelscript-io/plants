@@ -17,6 +17,9 @@ export default class DataSetup extends BaseCommand {
   @flags.boolean({ description: 'Skip the downloads and only seed and audit (data already imported)' })
   declare skipImports: boolean
 
+  @flags.boolean({ description: 'Also load the species catalog from USDA (about 3 hours; can be resumed)' })
+  declare catalog: boolean
+
   async run() {
     if (!this.skipImports) {
       for (const name of IMPORTS) {
@@ -31,6 +34,8 @@ export default class DataSetup extends BaseCommand {
 
     // Needs the plants seeded above (it reads each plant's USDA symbol).
     if (!this.skipImports && !(await this.step('import:usda-traits', []))) return
+
+    if (this.catalog && !this.skipImports && !(await this.step('import:usda-catalog', []))) return
 
     if (!(await this.step('plants:audit', []))) return
     if (this.publish && !(await this.step('plants:publish', ['--all']))) return

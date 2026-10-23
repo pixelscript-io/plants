@@ -118,6 +118,7 @@ export function buildOpenApiSpec(baseUrl: string) {
     servers: [{ url: `${baseUrl}/api/v1` }],
     tags: [
       { name: 'Plants', description: 'Search plants and read growing data. Requires an API key.' },
+      { name: 'Catalog', description: 'Species from the USDA PLANTS Database that USDA has growing characteristics for. Not curated like Plants. Requires an API key.' },
       { name: 'Frost & calendar', description: 'Frost dates and hardiness zones for a location, and a planting calendar built from frost dates. Requires an API key.' },
       { name: 'Status', description: 'Health checks and the data behind the public status page. No API key needed.' },
       { name: 'Moon', description: 'Moon phase for a date and the phases in a month or year. Requires an API key.' },
@@ -239,6 +240,48 @@ export function buildOpenApiSpec(baseUrl: string) {
             },
             '404': errorResponse('The ZIP code is unknown, or no weather station is within 100 km.'),
             '422': errorResponse('The location is missing or a parameter is invalid.'),
+            ...keyedErrors,
+          },
+        },
+      },
+      '/catalog': {
+        get: {
+          tags: ['Catalog'],
+          operationId: 'searchCatalog',
+          summary: 'Search the species catalog',
+          description:
+            'Returns a page of species sorted by common name, from the USDA PLANTS Database (public domain). Only species USDA has growing characteristics for are listed. The data is not curated: it describes the species in the wild, so use `/plants` for garden guidance and this for breadth. Filters combine with AND.',
+          security: [{ ApiKeyAuth: [] }],
+          parameters: [
+            { name: 'q', in: 'query', description: 'Text to search for in common and scientific names (case-insensitive).', schema: { type: 'string', minLength: 1, maxLength: 100 }, example: 'milkweed' },
+            { name: 'growthHabit', in: 'query', schema: { type: 'string', enum: ['Forb/herb', 'Graminoid', 'Shrub', 'Subshrub', 'Tree', 'Vine', 'Lichenous', 'Nonvascular'] } },
+            { name: 'duration', in: 'query', schema: { type: 'string', enum: ['Annual', 'Biennial', 'Perennial'] } },
+            { name: 'nativeStatus', in: 'query', description: 'Native or introduced in the lower 48 US states. A species can be both.', schema: { type: 'string', enum: ['native', 'introduced'] } },
+            { name: 'shadeTolerance', in: 'query', schema: { type: 'string', enum: ['Low', 'Medium', 'High'] } },
+            { name: 'droughtTolerance', in: 'query', schema: { type: 'string', enum: ['None', 'Low', 'Medium', 'High'] } },
+            { name: 'page', in: 'query', schema: { type: 'integer', minimum: 1, default: 1 } },
+            { name: 'perPage', in: 'query', schema: { type: 'integer', minimum: 1, maximum: 100, default: 20 } },
+          ],
+          responses: {
+            '200': { description: 'A page of species.', headers: rateLimitHeaders, content: jsonContent(ref('CatalogPage')) },
+            '422': errorResponse('A query parameter is invalid.'),
+            ...keyedErrors,
+          },
+        },
+      },
+      '/catalog/{symbol}': {
+        get: {
+          tags: ['Catalog'],
+          operationId: 'getCatalogSpecies',
+          summary: 'Get a catalog species',
+          description: 'Returns the species with all the growing characteristics we keep from USDA.',
+          security: [{ ApiKeyAuth: [] }],
+          parameters: [
+            { name: 'symbol', in: 'path', required: true, description: 'USDA PLANTS symbol (case-insensitive).', schema: { type: 'string' }, example: 'ASTU' },
+          ],
+          responses: {
+            '200': { description: 'The species.', headers: rateLimitHeaders, content: jsonContent({ type: 'object', required: ['data'], properties: { data: ref('CatalogSpecies') } }) },
+            '404': errorResponse('No catalog species with that symbol.'),
             ...keyedErrors,
           },
         },
@@ -765,6 +808,45 @@ export function buildOpenApiSpec(baseUrl: string) {
             waterNeeds: { oneOf: [ref('WaterNeeds'), { type: 'null' }] },
             frostTolerance: { oneOf: [ref('FrostTolerance'), { type: 'null' }] },
           },
+        },
+        CatalogSpeciesSummary: {
+          type: 'object',
+          required: ['usdaSymbol', 'scientificName'],
+          properties: {
+            usdaSymbol: { type: 'string', example: 'ASTU' },
+            scientificName: { type: 'string', example: 'Asclepias tuberosa L.' },
+            commonName: nullable('string'),
+            family: nullable('string'),
+            durations: { ...nullable('array'), items: { type: 'string' } },
+            growthHabits: { ...nullable('array'), items: { type: 'string' } },
+            nativeStatus: { type: ['string', 'null'], enum: ['native', 'introduced', 'native_and_introduced', null] },
+            shadeTolerance: nullable('string'),
+            droughtTolerance: nullable('string'),
+          },
+        },
+        CatalogPage: {
+          type: 'object',
+          required: ['data', 'metadata'],
+          properties: {
+            data: { type: 'array', items: ref('CatalogSpeciesSummary') },
+            metadata: ref('PageMetadata'),
+          },
+        },
+        CatalogSpecies: {
+          allOf: [
+            ref('CatalogSpeciesSummary'),
+            {
+              type: 'object',
+              required: ['characteristics', 'source'],
+              properties: {
+                characteristics: { description: 'The same object as `usda.characteristics` on a plant.', oneOf: [{ type: 'object', additionalProperties: true }, { type: 'null' }] },
+                source: {
+                  type: 'object',
+                  properties: { name: { type: 'string' }, license: { type: 'string' }, note: { type: 'string' } },
+                },
+              },
+            },
+          ],
         },
         PageMetadata: {
           type: 'object',

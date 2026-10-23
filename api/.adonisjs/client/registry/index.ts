@@ -168,6 +168,18 @@ const routes = {
     tokens: [[0,"api"],[0,"v1"],[0,"hardiness"]],
     types: placeholder as Registry['climate.hardiness.show']['types'],
   },
+  'climate.catalog.index': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/v1/catalog',
+    tokens: [[0,"api"],[0,"v1"],[0,"catalog"]],
+    types: placeholder as Registry['climate.catalog.index']['types'],
+  },
+  'climate.catalog.show': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/v1/catalog/:symbol',
+    tokens: [[0,"api"],[0,"v1"],[0,"catalog"],[1,"symbol"]],
+    types: placeholder as Registry['climate.catalog.show']['types'],
+  },
   'climate.calendar.show': {
     methods: ["GET","HEAD"],
     pattern: '/api/v1/calendar',

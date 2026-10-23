@@ -74,6 +74,10 @@ export interface ApiDefinition {
     hardiness: {
       show: typeof routes['climate.hardiness.show']
     }
+    catalog: {
+      index: typeof routes['climate.catalog.index']
+      show: typeof routes['climate.catalog.show']
+    }
     calendar: {
       show: typeof routes['climate.calendar.show']
     }

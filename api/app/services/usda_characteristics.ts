@@ -50,3 +50,12 @@ export function parseCharacteristics(raw: RawCharacteristics | null) {
     lifespan: raw['Lifespan'] ?? null,
   }
 }
+
+const NATIVE_STATUS: Record<string, 'native' | 'introduced' | 'native_and_introduced'> = {
+  Native: 'native',
+  Introduced: 'introduced',
+  'Introduced, Native': 'native_and_introduced',
+}
+
+/** Native status in the lower 48 states as stored ("Native", "Introduced", "Introduced, Native"), as an API value. */
+export const nativeStatusValue = (stored: string | null) => (stored ? (NATIVE_STATUS[stored] ?? null) : null)

@@ -34,6 +34,14 @@ red oak, pomegranate). Garden practice often differs from range ecology, so seve
 Left out on purpose: height for vegetables and herbs (USDA gives the bolting height) and annuals that USDA lists
 as perennial (potato, eggplant: tender perennials grown as annuals).
 
+## Species catalog (2026-10-23)
+
+`GET /api/v1/catalog` serves species from the USDA PLANTS Database (public domain) that USDA has growing
+characteristics for, loaded by `node ace import:usda-catalog`. It is a separate tier from the curated plants:
+nothing here was reviewed, values describe the species in the wild, and the response says so. Species that are
+already curated plants are left out. Every USDA species with a common name (about 35,000, without varieties
+and subspecies) is probed once; those without characteristics are stored as probed, not served.
+
 ## Summary
 
 | Check | Result |

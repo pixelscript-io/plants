@@ -1,15 +1,9 @@
 import type Plant from '#models/plant'
-import { parseCharacteristics } from '#services/usda_characteristics'
+import { nativeStatusValue, parseCharacteristics } from '#services/usda_characteristics'
 import { BaseTransformer } from '@adonisjs/core/transformers'
 
 const range = (min: number | null, max: number | null) =>
   min === null && max === null ? null : { min, max }
-
-const NATIVE_STATUS: Record<string, 'native' | 'introduced' | 'native_and_introduced'> = {
-  Native: 'native',
-  Introduced: 'introduced',
-  'Introduced, Native': 'native_and_introduced',
-}
 
 /**
  * Full representation with growing data, companions and amendments.
@@ -61,9 +55,7 @@ export default class PlantDetailTransformer extends BaseTransformer<Plant> {
       usda: {
         durations: plant.usdaDurations,
         growthHabits: plant.usdaGrowthHabits,
-        nativeStatus: plant.nativeStatusContiguous
-          ? (NATIVE_STATUS[plant.nativeStatusContiguous] ?? null)
-          : null,
+        nativeStatus: nativeStatusValue(plant.nativeStatusContiguous),
         characteristics: parseCharacteristics(plant.usdaCharacteristics),
       },
       names: plant.names.map((name) => ({ name: name.name, language: name.language })),
