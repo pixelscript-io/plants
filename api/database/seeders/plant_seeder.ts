@@ -4,7 +4,7 @@ import Plant from '#models/plant'
 import PlantName from '#models/plant_name'
 import PlantSource from '#models/plant_source'
 import RawRecord from '#models/raw_record'
-import { CROSSCHECK_DATE, SOURCES, crosschecks } from './data/crosschecks.js'
+import { CROSSCHECK_DATE, CROSSCHECK_DATE_BY_PLANT, SOURCES, crosschecks } from './data/crosschecks.js'
 import { plants, type Range } from './data/plants.js'
 
 type UsdaPayload = {
@@ -133,7 +133,7 @@ export default class PlantSeeder extends BaseSeeder {
           field: 'planting_and_harvest',
           source: 'extension_crosscheck',
           license: 'Original',
-          attribution: `Planting windows and days to harvest cross-checked on ${CROSSCHECK_DATE} against: ${checked
+          attribution: `Planting windows and days to harvest cross-checked on ${CROSSCHECK_DATE_BY_PLANT[plant.slug] ?? CROSSCHECK_DATE} against: ${checked
             .map((key) => SOURCES[key])
             .join('; ')}. Values are our own curation, not copied.`,
           fetchedAt: now,

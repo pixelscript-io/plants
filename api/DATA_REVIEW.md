@@ -10,7 +10,10 @@ annuals, shrubs and shade trees), with 106 more companion pairs. Everything belo
 review (counts, extension cross-checks, corrections) describes the **first 138 plants only**.
 
 - The new plants pass `plants:audit` (0 errors) and each has a USDA symbol and at least one companion.
-- Their values come from general horticultural knowledge. **None are cross-checked** against an extension guide, and ornamental companion pairs rest mostly on garden practice and pollinator support rather than trials.
+- Their values come from general horticultural knowledge. **8 of the 81 have been cross-checked** (below); the other 73 have not, and ornamental companion pairs rest mostly on garden practice and pollinator support rather than trials.
+- Cross-checked 2026-10-23 against the MSU MontGuide table: lima bean (harvest 75 to 90, window from 1 week after frost), scallion (window -3 to +2, from the onion row), napa cabbage (Chinese cabbage row: start indoors 8 to 6 weeks before, transplant 4 weeks before to frost, harvest 50 to 80), daikon (window from 6 weeks before, from the radish row) and acorn squash (harvest 85 to 100, winter squash row). Celosia, globe amaranth and ageratum were checked for start-indoors timing against Harvest to Table, which is a gardening publisher, not an extension service.
+- No guide was found for fava bean, shallot, celeriac, mizuna, corn salad, ground cherry, chervil, epazote, holy basil, larkspur, Mexican sunflower or four o'clock, so their windows stand on general knowledge.
+- Perennial, shrub and tree hardiness zones were not checked except where USDA flagged them (next section).
 - They are seeded **unpublished**. `plants:publish --all` (and `data:setup --publish`) would publish them too; review first, or publish by slug.
 - Cucamelon was dropped because it has no USDA PLANTS entry, which every plant needs.
 
@@ -21,7 +24,9 @@ minimum temperature, mature height, toxicity and more) for plants where USDA has
 `plants:audit --warnings` compares them with our values and prints `USDA:` warnings. They never block publishing:
 USDA describes the species in the wild, so a difference is a prompt to look, not proof we are wrong.
 
-Flagged now (14), worth a look: California poppy and Southern magnolia hardiness zones (we claim colder than USDA),
+Resolved 2026-10-23: zones corrected for California poppy (8 to 10, was 6 to 10, and half-hardy), Southern magnolia (7 to 10, was 6 to 10; zone 6 only for cold-hardy cultivars) and lanceleaf coreopsis (4 to 9, was 3 to 9). The other flags were kept with a note in `database/seeders/data/usda_reviews.ts` and no longer warn. Low-water ratings for bergamot, forsythia, red oak and pomegranate were kept on general knowledge, not confirmed by a source.
+
+Original 14 flags, for the record: California poppy and Southern magnolia hardiness zones (we claim colder than USDA),
 black-eyed Susan, blazing star, lanceleaf coreopsis, foxglove, ninebark and oakleaf hydrangea zones (smaller gaps),
 and low-water ratings that USDA rates as low or no drought tolerance (coneflower, coreopsis, bergamot, forsythia,
 red oak, pomegranate). Garden practice often differs from range ecology, so several of these are probably fine.

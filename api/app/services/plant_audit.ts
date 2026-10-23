@@ -2,6 +2,7 @@ import Amendment from '#models/amendment'
 import Companion from '#models/companion'
 import Plant from '#models/plant'
 import { parseCharacteristics } from '#services/usda_characteristics'
+import { USDA_REVIEWED } from '#database/seeders/data/usda_reviews'
 
 export type Finding = { severity: 'error' | 'warning'; slug: string; message: string }
 
@@ -149,8 +150,9 @@ export async function auditPlants() {
     // ---- Second opinion from USDA PLANTS ----
     // Warnings only: USDA describes the species in wild or range conditions, so a
     // difference is a prompt to look, not proof that our value is wrong.
-    const usda = parseCharacteristics(p.usdaCharacteristics)
-    if (p.usdaDurations?.length && p.lifeCycle) {
+    // Plants whose warnings were looked into and kept (see usda_reviews.ts) are skipped.
+    const usda = USDA_REVIEWED[s] ? null : parseCharacteristics(p.usdaCharacteristics)
+    if (!USDA_REVIEWED[s] && p.usdaDurations?.length && p.lifeCycle) {
       // Tender perennials grown as annuals (potato, eggplant) are listed Perennial by USDA, so an
       // annual only conflicts when USDA lists no Annual and no Perennial.
       const wanted = p.lifeCycle[0].toUpperCase() + p.lifeCycle.slice(1)

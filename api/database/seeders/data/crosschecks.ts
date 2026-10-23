@@ -9,7 +9,21 @@
 
 export const CROSSCHECK_DATE = '2026-10-22'
 
+/** Plants checked on a later day than the first batch. */
+export const CROSSCHECK_DATE_BY_PLANT: Record<string, string> = {
+  'lima-bean': '2026-10-23',
+  scallion: '2026-10-23',
+  'napa-cabbage': '2026-10-23',
+  'daikon-radish': '2026-10-23',
+  'acorn-squash': '2026-10-23',
+  celosia: '2026-10-23',
+  ageratum: '2026-10-23',
+  'globe-amaranth': '2026-10-23',
+}
+
 export const SOURCES = {
+  harvestToTable:
+    'Harvest to Table, "When to Seed Start Annual Flowers" (a gardening publisher, not an extension service; weeks before last frost only)',
   msu: 'Montana State University Extension, MontGuide MT199308AG, "Can I Grow That Here? Vegetable Seed and Transplant Schedules"',
   unh: 'UNH Cooperative Extension, "Growing Vegetables: When to Plant Your Vegetable Garden" (2016)',
   herbs:
@@ -71,4 +85,14 @@ export const crosschecks: Record<string, Source[]> = {
   sorrel: ['sorrel'],
   'jerusalem-artichoke': ['jerusalemArtichoke'],
   radicchio: ['radicchio'],
+  // Checked 2026-10-23 against the MSU table. Napa cabbage uses its "Chinese cabbage" row,
+  // scallion and daikon the onion and radish rows (windows only), acorn squash the winter squash row.
+  'lima-bean': ['msu'],
+  scallion: ['msu'],
+  'napa-cabbage': ['msu'],
+  'daikon-radish': ['msu'],
+  'acorn-squash': ['msu'],
+  celosia: ['harvestToTable'],
+  ageratum: ['harvestToTable'],
+  'globe-amaranth': ['harvestToTable'],
 }
