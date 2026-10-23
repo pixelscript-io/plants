@@ -303,7 +303,7 @@ export class PlantSourceSchema extends BaseModel {
 }
 
 export class PlantSchema extends BaseModel {
-  static $columns = ['commonName', 'createdAt', 'daysToGerminationMax', 'daysToGerminationMin', 'daysToHarvestMax', 'daysToHarvestMin', 'description', 'directSowWeeksMax', 'directSowWeeksMin', 'family', 'frostTolerance', 'gbifId', 'genus', 'hardinessZoneMax', 'hardinessZoneMin', 'heightCm', 'id', 'imageUrl', 'isPublished', 'lifeCycle', 'nativeStatusContiguous', 'nativeStatusL48', 'nativeStatusLower48', 'plantType', 'scientificName', 'slug', 'soilPhMax', 'soilPhMin', 'soilTypes', 'sowIndoorsWeeksMax', 'sowIndoorsWeeksMin', 'spacingCm', 'sun', 'transplantWeeksMax', 'transplantWeeksMin', 'updatedAt', 'usdaDurations', 'usdaGrowthHabits', 'usdaSymbol', 'waterNeeds', 'wateringIntervalDays', 'wikidataId'] as const
+  static $columns = ['commonName', 'createdAt', 'daysToGerminationMax', 'daysToGerminationMin', 'daysToHarvestMax', 'daysToHarvestMin', 'description', 'directSowWeeksMax', 'directSowWeeksMin', 'family', 'frostTolerance', 'gbifId', 'genus', 'hardinessZoneMax', 'hardinessZoneMin', 'heightCm', 'id', 'imageUrl', 'isPublished', 'lifeCycle', 'nativeStatusContiguous', 'nativeStatusL48', 'nativeStatusLower48', 'plantType', 'scientificName', 'slug', 'soilPhMax', 'soilPhMin', 'soilTypes', 'sowIndoorsWeeksMax', 'sowIndoorsWeeksMin', 'spacingCm', 'sun', 'transplantWeeksMax', 'transplantWeeksMin', 'updatedAt', 'usdaCharacteristics', 'usdaDurations', 'usdaGrowthHabits', 'usdaSymbol', 'waterNeeds', 'wateringIntervalDays', 'wikidataId'] as const
   $columns = PlantSchema.$columns
   @column()
   declare commonName: string
@@ -377,6 +377,8 @@ export class PlantSchema extends BaseModel {
   declare transplantWeeksMin: number | null
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
+  @column()
+  declare usdaCharacteristics: any | null
   @column()
   declare usdaDurations: any | null
   @column()

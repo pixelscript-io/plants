@@ -1,6 +1,7 @@
 import Amendment from '#models/amendment'
 import Companion from '#models/companion'
 import Plant from '#models/plant'
+import { parseCharacteristics } from '#services/usda_characteristics'
 
 export type Finding = { severity: 'error' | 'warning'; slug: string; message: string }
 
@@ -143,6 +144,53 @@ export async function auditPlants() {
     }
     if (!/^[A-Z][a-z]+( [a-z-]+)?$/.test(p.scientificName ?? '')) {
       add('warning', s, `scientific name "${p.scientificName}" is not "Genus" or "Genus species"`)
+    }
+
+    // ---- Second opinion from USDA PLANTS ----
+    // Warnings only: USDA describes the species in wild or range conditions, so a
+    // difference is a prompt to look, not proof that our value is wrong.
+    const usda = parseCharacteristics(p.usdaCharacteristics)
+    if (p.usdaDurations?.length && p.lifeCycle) {
+      // Tender perennials grown as annuals (potato, eggplant) are listed Perennial by USDA, so an
+      // annual only conflicts when USDA lists no Annual and no Perennial.
+      const wanted = p.lifeCycle[0].toUpperCase() + p.lifeCycle.slice(1)
+      const ok =
+        p.usdaDurations.includes(wanted) ||
+        (p.lifeCycle === 'biennial' && p.usdaDurations.includes('Perennial')) ||
+        (p.lifeCycle === 'annual' && p.usdaDurations.includes('Perennial'))
+      if (!ok) add('warning', s, `USDA: life cycle differs. We say ${p.lifeCycle}; USDA lists ${p.usdaDurations.join(', ')}`)
+    }
+    if (usda) {
+      const ph = usda.soilPh
+      if (ph && ph.min !== null && ph.max !== null && p.soilPhMin !== null && p.soilPhMax !== null) {
+        if (p.soilPhMax < ph.min - 0.5 || p.soilPhMin > ph.max + 0.5) {
+          add('warning', s, `USDA: soil pH ${ph.min} to ${ph.max} does not overlap ours (${p.soilPhMin} to ${p.soilPhMax})`)
+        }
+      }
+      if (usda.minimumTemperatureF !== null && p.hardinessZoneMin !== null) {
+        // The cold end of USDA zone N is -60 + 10 * (N - 1) degrees F.
+        const zoneLow = -60 + 10 * (p.hardinessZoneMin - 1)
+        if (usda.minimumTemperatureF > zoneLow + 15) {
+          add('warning', s, `USDA: tolerates down to ${usda.minimumTemperatureF}F, but our zone ${p.hardinessZoneMin} reaches ${zoneLow}F`)
+        }
+      }
+      if (p.sun === 'shade' && usda.shadeTolerance === 'Low') {
+        add('warning', s, 'USDA: shade tolerance is Low, but we say it grows in shade')
+      }
+      if (p.waterNeeds === 'low' && (usda.droughtTolerance === 'None' || usda.droughtTolerance === 'Low')) {
+        add('warning', s, `USDA: drought tolerance is ${usda.droughtTolerance}, but we say low water needs`)
+      }
+      if (p.waterNeeds === 'high' && usda.droughtTolerance === 'High') {
+        add('warning', s, 'USDA: drought tolerance is High, but we say high water needs')
+      }
+      // Not for vegetables and herbs: USDA gives the height when they flower or bolt, we give the harvest height.
+      const harvested = p.plantType === 'vegetable' || p.plantType === 'herb'
+      if (!harvested && p.heightCm !== null && usda.matureHeightFt !== null && usda.matureHeightFt > 0) {
+        const usdaCm = usda.matureHeightFt * 30.48
+        if (p.heightCm > usdaCm * 3 || p.heightCm < usdaCm / 3) {
+          add('warning', s, `USDA: mature height ${usda.matureHeightFt} ft (${Math.round(usdaCm)} cm) is far from our ${p.heightCm} cm`)
+        }
+      }
     }
   }
 

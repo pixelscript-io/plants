@@ -2,6 +2,7 @@ import { PlantSchema } from '#database/schema'
 import { column, hasMany, manyToMany } from '@adonisjs/lucid/orm'
 import type { HasMany, ManyToMany } from '@adonisjs/lucid/types/relations'
 import env from '#start/env'
+import type { RawCharacteristics } from '#services/usda_characteristics'
 import Amendment from '#models/amendment'
 import Companion from '#models/companion'
 import PlantName from '#models/plant_name'
@@ -39,6 +40,13 @@ export default class Plant extends PlantSchema {
       typeof value === 'string' ? JSON.parse(value) : value,
   })
   declare usdaGrowthHabits: string[] | null
+
+  @column({
+    prepare: (value: RawCharacteristics | null) => (value === null ? null : JSON.stringify(value)),
+    consume: (value: string | RawCharacteristics | null) =>
+      typeof value === 'string' ? JSON.parse(value) : value,
+  })
+  declare usdaCharacteristics: RawCharacteristics | null
 
   @hasMany(() => PlantName)
   declare names: HasMany<typeof PlantName>

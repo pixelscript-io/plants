@@ -1,10 +1,14 @@
 import { BaseCommand } from '@adonisjs/core/ace'
 import type { CommandOptions } from '@adonisjs/core/types/ace'
+import { KEPT_CHARACTERISTICS, type RawCharacteristics } from '#services/usda_characteristics'
 
 const PROFILE_URL = 'https://plantsservices.sc.egov.usda.gov/api/PlantProfile?symbol='
+const CHARACTERISTICS_URL = 'https://plantsservices.sc.egov.usda.gov/api/PlantCharacteristics/'
 const PAUSE_MS = 250
 
 type Profile = {
+  Id: number
+  HasCharacteristics: boolean
   Durations: string[] | null
   GrowthHabits: string[] | null
   NativeStatuses: { Region: string; Type: string }[] | null
@@ -13,7 +17,7 @@ type Profile = {
 export default class ImportUsdaTraits extends BaseCommand {
   static commandName = 'import:usda-traits'
   static description =
-    'Fetch duration, growth habit and native status from the USDA PLANTS profile (public domain) for every plant with a USDA symbol'
+    'Fetch duration, growth habit, native status and growing characteristics from USDA PLANTS (public domain) for every plant with a USDA symbol'
   static options: CommandOptions = { startApp: true }
 
   async run() {
@@ -37,6 +41,28 @@ export default class ImportUsdaTraits extends BaseCommand {
         plant.usdaDurations = profile.Durations?.length ? profile.Durations : null
         plant.usdaGrowthHabits = profile.GrowthHabits?.length ? profile.GrowthHabits : null
         plant.nativeStatusContiguous = types.length ? types.sort().join(', ') : null
+
+        plant.usdaCharacteristics = null
+        if (profile.HasCharacteristics) {
+          await new Promise((resolve) => setTimeout(resolve, PAUSE_MS))
+          const found = await fetch(`${CHARACTERISTICS_URL}${profile.Id}`)
+          if (!found.ok) throw new Error(`characteristics HTTP ${found.status}`)
+          const rows = (await found.json()) as {
+            PlantCharacteristicName: string
+            PlantCharacteristicValue: string
+            CultivarName: string | null
+            SynonymName: string | null
+          }[]
+          const kept: Record<string, string> = {}
+          for (const row of rows) {
+            // Values for the species itself, not for a cultivar or a synonym.
+            if (row.CultivarName || row.SynonymName) continue
+            if ((KEPT_CHARACTERISTICS as readonly string[]).includes(row.PlantCharacteristicName)) {
+              kept[row.PlantCharacteristicName] = row.PlantCharacteristicValue
+            }
+          }
+          plant.usdaCharacteristics = Object.keys(kept).length ? (kept as RawCharacteristics) : null
+        }
         await plant.save()
         updated++
       } catch (error) {

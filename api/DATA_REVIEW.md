@@ -14,6 +14,21 @@ review (counts, extension cross-checks, corrections) describes the **first 138 p
 - They are seeded **unpublished**. `plants:publish --all` (and `data:setup --publish`) would publish them too; review first, or publish by slug.
 - Cucamelon was dropped because it has no USDA PLANTS entry, which every plant needs.
 
+## USDA second opinion (2026-10-23)
+
+`node ace import:usda-traits` also stores USDA PLANTS characteristics (shade and drought tolerance, soil pH,
+minimum temperature, mature height, toxicity and more) for plants where USDA has them: 51 of the 219.
+`plants:audit --warnings` compares them with our values and prints `USDA:` warnings. They never block publishing:
+USDA describes the species in the wild, so a difference is a prompt to look, not proof we are wrong.
+
+Flagged now (14), worth a look: California poppy and Southern magnolia hardiness zones (we claim colder than USDA),
+black-eyed Susan, blazing star, lanceleaf coreopsis, foxglove, ninebark and oakleaf hydrangea zones (smaller gaps),
+and low-water ratings that USDA rates as low or no drought tolerance (coneflower, coreopsis, bergamot, forsythia,
+red oak, pomegranate). Garden practice often differs from range ecology, so several of these are probably fine.
+
+Left out on purpose: height for vegetables and herbs (USDA gives the bolting height) and annuals that USDA lists
+as perennial (potato, eggplant: tender perennials grown as annuals).
+
 ## Summary
 
 | Check | Result |
