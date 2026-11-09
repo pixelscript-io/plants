@@ -45,6 +45,16 @@ export default await Env.create(new URL('../', import.meta.url), {
   SMTP_PASSWORD: Env.schema.string.optional(),
   SMTP_SECURE: Env.schema.boolean.optional(),
 
+  // Database: sqlite (default) or pg. The DB_* variables are for pg.
+  DB_CONNECTION: Env.schema.enum.optional(['sqlite', 'pg'] as const),
+  DB_HOST: Env.schema.string.optional(),
+  DB_PORT: Env.schema.number.optional(),
+  DB_USER: Env.schema.string.optional(),
+  DB_PASSWORD: Env.schema.string.optional(),
+  DB_DATABASE: Env.schema.string.optional(),
+  // Set true when the Postgres server requires TLS (most hosted databases do).
+  DB_SSL: Env.schema.boolean.optional(),
+
   // Where the SQLite database file lives (default: tmp/db.sqlite3).
   SQLITE_PATH: Env.schema.string.optional(),
 

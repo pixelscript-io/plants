@@ -16,15 +16,15 @@ export default class CatalogController {
       })
     }
     // growth_habits and durations are JSON arrays of plain words, so a quoted match is exact.
-    if (filters.growthHabit) query.whereRaw('growth_habits like ?', [`%"${filters.growthHabit}"%`])
-    if (filters.duration) query.whereRaw('durations like ?', [`%"${filters.duration}"%`])
+    if (filters.growthHabit) query.whereRaw('cast(growth_habits as text) like ?', [`%"${filters.growthHabit}"%`])
+    if (filters.duration) query.whereRaw('cast(durations as text) like ?', [`%"${filters.duration}"%`])
     if (filters.nativeStatus === 'native') query.where('nativeStatusContiguous', 'like', '%Native%')
     if (filters.nativeStatus === 'introduced') query.where('nativeStatusContiguous', 'like', '%Introduced%')
     if (filters.shadeTolerance) {
-      query.whereRaw('characteristics like ?', [`%"Shade Tolerance":"${filters.shadeTolerance}"%`])
+      query.whereRaw('cast(characteristics as text) like ?', [`%"Shade Tolerance":"${filters.shadeTolerance}"%`])
     }
     if (filters.droughtTolerance) {
-      query.whereRaw('characteristics like ?', [`%"Drought Tolerance":"${filters.droughtTolerance}"%`])
+      query.whereRaw('cast(characteristics as text) like ?', [`%"Drought Tolerance":"${filters.droughtTolerance}"%`])
     }
 
     const page = await query.paginate(filters.page ?? 1, filters.perPage ?? 20)

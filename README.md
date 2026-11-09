@@ -12,7 +12,8 @@ More detail lives next to the code: [`api/DATA_REVIEW.md`](api/DATA_REVIEW.md) (
 ## What was and was not verified
 
 - **Verified (on Windows 11, Node 24):** every development step below; a production **build and run of the dashboard**; and a production **build of the API** run from a clean copy (`npm ci --omit=dev`, migrations, `data:setup --publish`, server start, health checks and one monitor run).
-- **Not verified:** running on **Linux or macOS**, and on **Postgres**. The database is SQLite. The Postgres steps are a starting point; test them before relying on them.
+- **Postgres (verified on Windows, Postgres 18):** the migrations, `data:setup --publish`, every endpoint, the monitor and the account flow (sign up, verify email, create and use a key) all run against Postgres. Hosted Postgres with TLS (`DB_SSL=true`) was not tried.
+- **Not verified locally:** **Linux and macOS.** `.github/workflows/verify.yml` builds and runs the API on Ubuntu with both SQLite and Postgres, and builds the dashboard; it runs on GitHub when `main` changes (or by hand from the Actions tab). Check that it is green before trusting a Linux deployment.
 - There is no automated test suite yet; checks are the type-checks and `plants:audit` below.
 
 ## Prerequisites
@@ -125,7 +126,7 @@ Notes:
 
 - **Install.** `better-sqlite3` ships a prebuilt binary; `npm ci` does not compile it, so no C++ toolchain is needed on common platforms.
 - **Time zones.** The API treats stored times as UTC whatever the server's time zone is.
-- **Database.** The current config uses SQLite (`SQLITE_PATH`, default `tmp/db.sqlite3`), which must be on persistent storage and is suited to a single instance. To use Postgres, install `pg`, switch the connection in `config/database.ts` (a commented example is there) and add the `DB_*` settings. This has not been tested here.
+- **Database.** SQLite is the default (`SQLITE_PATH`, default `tmp/db.sqlite3`); it must be on persistent storage and suits a single instance. For Postgres, create an empty database and set `DB_CONNECTION=pg`, `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD` and `DB_DATABASE` (plus `DB_SSL=true` if the server requires TLS). The database must use UTF-8. Then run the same `migration:run --force` and `data:setup --publish` steps. Use Postgres if you run more than one API instance.
 - **CORS.** `config/cors.ts` allows no origins in production. The dashboard does not need any (its server makes the calls), but browser apps calling the API directly do.
 - Plants are hidden until published (`node ace plants:publish --all`). Leave `SERVE_UNPUBLISHED` unset or `false`.
 

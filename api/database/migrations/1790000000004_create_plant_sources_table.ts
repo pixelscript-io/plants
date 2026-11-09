@@ -18,7 +18,7 @@ export default class extends BaseSchema {
       table.string('source').notNullable()
       table.string('source_id').nullable()
       table.string('license').notNullable()
-      table.string('attribution').nullable()
+      table.text('attribution').nullable()
       table.string('url').nullable()
       table.timestamp('fetched_at').nullable()
 
