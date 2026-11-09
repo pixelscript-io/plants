@@ -4,7 +4,14 @@ import Plant from '#models/plant'
 import PlantName from '#models/plant_name'
 import PlantSource from '#models/plant_source'
 import RawRecord from '#models/raw_record'
-import { CROSSCHECK_DATE, CROSSCHECK_DATE_BY_PLANT, SOURCES, crosschecks } from './data/crosschecks.js'
+import {
+  CROSSCHECK_DATE,
+  CROSSCHECK_DATE_BY_PLANT,
+  SOURCES,
+  ZONE_CHECKED,
+  ZONE_CHECKED_DATE,
+  crosschecks,
+} from './data/crosschecks.js'
 import { plants, type Range } from './data/plants.js'
 
 type UsdaPayload = {
@@ -125,6 +132,17 @@ export default class PlantSeeder extends BaseSeeder {
           'Hand-curated from general horticultural knowledge. Values other than those listed as cross-checked have not been independently verified.',
         fetchedAt: now,
       })
+
+      if (ZONE_CHECKED.has(plant.slug)) {
+        await PlantSource.create({
+          plantId: plant.id,
+          field: 'hardiness_zones',
+          source: 'extension_crosscheck',
+          license: 'Original',
+          attribution: `Hardiness zones compared on ${ZONE_CHECKED_DATE} with university extension and nursery listings; sources often disagree, so the range is the one most listings agree on. Values are our own curation, not copied.`,
+          fetchedAt: now,
+        })
+      }
 
       const checked = crosschecks[plant.slug]
       if (checked) {

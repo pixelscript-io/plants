@@ -96,3 +96,18 @@ export const crosschecks: Record<string, Source[]> = {
   ageratum: ['harvestToTable'],
   'globe-amaranth': ['harvestToTable'],
 }
+
+/**
+ * Plants whose hardiness zones were compared on 2026-10-23 with university
+ * extension and nursery listings found by web search (Penn State, NC State,
+ * Purdue, Wisconsin, Iowa State, Virginia Tech, UF/IFAS and others). Sources
+ * often disagree, so each range is the one most listings agree on, not a
+ * single authority's figure.
+ */
+export const ZONE_CHECKED_DATE = '2026-10-23'
+export const ZONE_CHECKED = new Set([
+  'anise-hyssop', 'hyssop', 'roman-chamomile', 'honeyberry', 'aronia', 'american-persimmon',
+  'quince', 'sour-cherry', 'avocado', 'almond', 'american-hazelnut', 'pecan', 'new-england-aster',
+  'butterfly-milkweed', 'joe-pye-weed', 'lambs-ear', 'canna', 'boxwood', 'weigela',
+  'arrowwood-viburnum', 'camellia', 'sugar-maple', 'japanese-maple', 'river-birch',
+])
